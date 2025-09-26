@@ -1,0 +1,16 @@
+@import "tailwindcss";
+
+.dynamic-column-text{
+    font-size: 10vw;
+}
+
+@media (max-width: 768px) {
+
+  .dynamic-column-text {
+    text-align-last: center;
+    margin-block: -2vh;
+    font-size: 4rem; /* Larger text for mobile */
+
+  }
+
+}

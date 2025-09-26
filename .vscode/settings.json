@@ -2,6 +2,11 @@
     "piny.project_settings": {
         "open-pages": [
             "pinyfakepage.html"
+        ],
+        "recent-classes": [
+            "1",
+            "m",
+            "-"
         ]
     }
 }
