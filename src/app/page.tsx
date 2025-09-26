@@ -1,5 +1,6 @@
 import { agent } from "@/lib/api";
 import "./page.css"
+import { Search } from "@mui/icons-material"
 
 export default async function Homepage() {
 
@@ -21,9 +22,15 @@ export default async function Homepage() {
         <div></div>
       </div>
       <div className="grid grid-cols-2">
-        <div></div>
+        <div className="relative">
+          <div className="absolute right-[2vw] top-[2vw]">
+            <div className="bg-black w-[10vh] h-[10vh] text-[9vh] rounded-full text-white flex items-center justify-center ">
+              <Search style={{ width: "7vh", height: "7vh"}} className="w-[10vh] h-[10vh] fill-current"></Search>
+            </div>
+          </div>
+        </div>
         <div className="bg-black text-white relative">
-          <div className="absolute md:top-0 left-[5vw] top-[2vh] text-[10vw]">
+          <div className="absolute md:top-0 left-[5vw] top-[2vh] text-[15vw]">
             <div className="flex flex-col md:flex-row">
               <span className=" dynamic-column-text">B</span>
               <span className=" dynamic-column-text">L</span>
