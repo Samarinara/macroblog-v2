@@ -2,8 +2,8 @@
 import "./page.css"
 
 import { agent } from "@/lib/api";
-import { useQuery } from "convex/react";
-import { api } from "convex/_generated/api";
+import { useQuery } from "convex/react"; // This is correct for the hook
+import { api } from "convex/_generated/api"; // This is the corrected path for the generated API
 
 import { Authenticated, Unauthenticated } from "convex/react";
 import { SignInButton, SignUpButton, UserButton } from "@clerk/nextjs";
