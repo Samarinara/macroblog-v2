@@ -15,10 +15,6 @@ import { Button } from "@/components/ui/button"
 import { Card } from "@/components/ui/card"
 
 export default function Homepage() {
-
-  const users = useQuery(api.users.get);
-  const sam = users?.find(user => user.username === "samarinara");
-
   
   return (
     <div className="grid lg:grid-cols-2 w-screen h-screen bg-gray-100 overflow-x-hidden">
