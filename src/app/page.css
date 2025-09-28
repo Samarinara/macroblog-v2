@@ -56,6 +56,7 @@
   }
 }
 
+
 @theme inline {
     --radius-sm: calc(var(--radius) - 4px);
     --radius-md: calc(var(--radius) - 2px);
@@ -119,6 +120,13 @@
     --shadow-opacity: var(--shadow-opacity);
     --color-shadow-color: var(--shadow-color);
     --color-destructive-foreground: var(--destructive-foreground);
+
+
+@keyframes focus {
+  0%, 100% { transform: scale(0); }
+  50% { transform: scale(0.2vw); }
+  100% { transform: scale(0); }
+}
 }
 
 :root {
