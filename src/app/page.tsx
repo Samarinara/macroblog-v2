@@ -63,7 +63,7 @@ export default function Homepage() {
           <h1>Featured Blogs</h1>
         </Card>
         <ul>
-            <li key="hello">
+{/*             <li key="hello">
               {users?.map(({ _id, displayName, bio }) => 
               <Card className="p-10 m-[2vh] sm:w-[45vw] lg:hover:scale-102 transition-transform" key={_id}>
                 <h1 className="text-3xl sm:text-2xl ">{displayName}</h1>
@@ -71,7 +71,7 @@ export default function Homepage() {
               
               </Card>
             )}
-            </li>
+            </li> */}
         </ul>
       </div>
     </div>
