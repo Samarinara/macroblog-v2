@@ -35,7 +35,7 @@ export default function Homepage() {
             <Authenticated>
               <UserButton />
             </Authenticated>
-          </header>       
+          </header>        
         </div>
       <div className="flex bg-green-900 allign-center justify-center items-center lg:text-[7vw] text-[15vw] text-white flex-col lg:h-[100vh] md:h-[40vh] h-[25vh] p-3">
         <h1>MACROBLOG</h1>
