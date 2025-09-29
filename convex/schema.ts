@@ -11,4 +11,22 @@ export default defineSchema({
     password: v.string(),
     username: v.string(),
   }),
+
+  posts: defineTable({
+    authorId: v.string(),
+    content: v.string(),
+    createdAt: v.number(),
+    updatedAt: v.number(),
+    title: v.string(),
+  }),
+
+  Comment: defineTable({
+    authorId: v.string(),
+    content: v.string(),
+    createdAt: v.number(),
+    updatedAt: v.number(),
+    comments: v.array(v.id("Comment")),
+    postId: v.string(),
+  }),
+
 });
