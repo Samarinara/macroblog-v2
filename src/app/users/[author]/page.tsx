@@ -2,8 +2,8 @@
 import { use } from "react";
 import { useQuery } from "convex/react";
 import { api } from "convex/_generated/api";
-
-export default function AuthorPage({ params }: { params: { author: string } }) {
+ 
+export default function AuthorPage({ params }: { params: { author: string }}) {
     const { author } = use(params);
     const authorsData = useQuery(api.users.getUserByUsername, { username: author });
 
