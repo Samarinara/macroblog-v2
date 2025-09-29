@@ -1,6 +1,6 @@
 "use client";
 import "./page.css"
-
+ 
 import { useMutation } from "convex/react";
 import { useQuery } from "convex/react";
 import { api } from "convex/_generated/api";
@@ -13,11 +13,43 @@ import { Search } from "@mui/icons-material"
 import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
 import { Card } from "@/components/ui/card"
+import { Skeleton } from "@/components/ui/skeleton"
+
+const FeaturedUsers: string[] = ["samkatevatis@gmail.com", "samkatevatis@usernametaken.net"]
+
+function FeaturedUserCard({ email }: { email: string }) {
+  const users = useQuery(api.users.getUserByEmail, { email });
+
+  // `users` is `undefined` while loading.
+  if (users === undefined) {
+    // While the user data is loading, or if the user is not found,
+    // we can show a loading message or a skeleton component.
+    return <Card className="p-10 m-[2vh] sm:w-[45vw]">
+      <Skeleton className="bg-emerald-900"></Skeleton>
+    </Card>;
+  }
+
+  // The query returns an array, so we take the first element.
+  const user = users[0];
+
+  // If the query returns an empty array, the user was not found.
+  if (!user) {
+    return <Card className="p-10 m-[2vh] sm:w-[45vw]">
+      User with email {email} not found.
+    </Card>;
+  }
+
+  return (
+    <Card className="p-10 m-[2vh] sm:w-[45vw] lg:hover:scale-102 transition-transform" key={user._id}>
+      <h1 className="text-3xl sm:text-2xl ">{user.displayName}</h1>
+      <p>{user.bio}</p>
+      <p>{user.email}</p>
+    </Card>
+  );
+}
 
 export default function Homepage() {
-  const createPost = useMutation(api.posts.createPost);
-  const users = useQuery(api.users.get);
-
+  const createPost = useMutation(api.posts.createPost); 
 
   const handleAddPost = async () => {
     await createPost({
@@ -69,15 +101,9 @@ export default function Homepage() {
           <h1>Featured Blogs</h1>
         </Card>
         <ul>
-{/*             <li key="hello">
-              {users?.map(({ _id, displayName, bio }) => 
-              <Card className="p-10 m-[2vh] sm:w-[45vw] lg:hover:scale-102 transition-transform" key={_id}>
-                <h1 className="text-3xl sm:text-2xl ">{displayName}</h1>
-                <p>{bio}</p>
-              
-              </Card>
-            )}
-            </li> */}
+          {FeaturedUsers.map((email) => (
+            <li key={email}><FeaturedUserCard email={email} /></li>
+          ))}
         </ul>
       </div>
     </div>

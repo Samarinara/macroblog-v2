@@ -33,3 +33,4 @@ export const get = query({
     return await ctx.db.query("posts").collect();
   },
 });
+

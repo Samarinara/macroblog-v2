@@ -8,7 +8,9 @@ export default defineSchema({
     email: v.string(),
     password: v.string(),
     username: v.string(),
-  }),
+  })
+    .index("byEmail", ["email"])
+    .index("byUsername", ["username"]),
 
   posts: defineTable({
     authorId: v.string(),
@@ -19,7 +21,19 @@ export default defineSchema({
     likes: v.array(v.id("Like")),
     tags: v.array(v.string()),
     title: v.string(),
-  }),
+  })
+    .index("byAuthor", ["authorId"])
+    .index("byTags", ["tags"])
+    .index("byCreatedAt", ["createdAt"])
+    ,
+
+  bios: defineTable({
+    userId: v.string(),
+    content: v.string()
+  }).index("byUserId", ["userId"]),
+
+
+
 
   comments: defineTable({
     authorId: v.string(),
