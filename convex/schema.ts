@@ -2,8 +2,6 @@ import { defineSchema, defineTable } from "convex/server";
 import { v } from "convex/values";
 
 export default defineSchema({
-  // Other tables here...
-
   users: defineTable({
     bio: v.string(),
     displayName: v.string(),
@@ -17,10 +15,13 @@ export default defineSchema({
     content: v.string(),
     createdAt: v.number(),
     updatedAt: v.number(),
+    comments: v.array(v.id("Comment")),
+    likes: v.array(v.id("Like")),
+    tags: v.array(v.string()),
     title: v.string(),
   }),
 
-  Comment: defineTable({
+  comments: defineTable({
     authorId: v.string(),
     content: v.string(),
     createdAt: v.number(),

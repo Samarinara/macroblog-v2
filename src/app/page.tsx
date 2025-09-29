@@ -1,8 +1,7 @@
 "use client";
 import "./page.css"
 
-import { agent } from "@/lib/api";
-import { useQuery } from "convex/react";
+import { useMutation } from "convex/react";
 import { api } from "convex/_generated/api";
 
 import { Authenticated, Unauthenticated } from "convex/react";
@@ -15,7 +14,15 @@ import { Button } from "@/components/ui/button"
 import { Card } from "@/components/ui/card"
 
 export default function Homepage() {
-  
+  const createPost = useMutation(api.posts.createPost);
+
+  const handleAddPost = () => {
+    createPost({
+      title: "My First Post!",
+      content: "This is a dummy post created from the frontend.",
+      tags: ["testing", "first-post"],
+    });
+  }
   return (
     <div className="grid lg:grid-cols-2 w-screen h-screen bg-gray-100 overflow-x-hidden">
         <div className="absolute top-0 left-0 m-[2vw]">
@@ -48,8 +55,8 @@ export default function Homepage() {
             </SignUpButton>               
           </Unauthenticated>
           <Authenticated>
-            <Button className="h-[5vh] w-[20vw]">
-              Post to 
+            <Button className="h-[5vh] w-[20vw]" onClick={handleAddPost}>
+              Add Dummy Post
             </Button>
           </Authenticated>
         </div>
