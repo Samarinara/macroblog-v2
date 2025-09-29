@@ -16,7 +16,7 @@ import { Card } from "@/components/ui/card"
 
 export default function Homepage() {
   const createPost = useMutation(api.posts.createPost);
-  const users = useQuery(api.users.allUsers);
+  const users = useQuery(api.users.get);
 
 
   const handleAddPost = async () => {
@@ -43,7 +43,7 @@ export default function Homepage() {
             </Authenticated>
           </header>        
         </div>
-      <div className="flex bg-green-900 allign-center justify-center items-center lg:text-[7vw] text-[15vw] text-white flex-col lg:h-[100vh] md:h-[40vh] h-[25vh] p-3">
+      <div className="flex bg-green-900 justify-center items-center lg:text-[7vw] text-[15vw] text-white flex-col lg:h-[100vh] md:h-[40vh] h-[25vh] p-3">
         <h1>MACROBLOG</h1>
         <div className="flex flex-row gap-4">
           <Input placeholder="Search" className="lg:w-[30vw] lg:h-[7vh] h-[5vh] w-[60vw] text-xl border"/>
