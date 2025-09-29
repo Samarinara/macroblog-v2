@@ -2,6 +2,7 @@
 import "./page.css"
 
 import { useMutation } from "convex/react";
+import { useQuery } from "convex/react";
 import { api } from "convex/_generated/api";
 
 import { Authenticated, Unauthenticated } from "convex/react";
@@ -15,9 +16,11 @@ import { Card } from "@/components/ui/card"
 
 export default function Homepage() {
   const createPost = useMutation(api.posts.createPost);
+  const users = useQuery(api.users.allUsers);
 
-  const handleAddPost = () => {
-    createPost({
+
+  const handleAddPost = async () => {
+    await createPost({
       title: "My First Post!",
       content: "This is a dummy post created from the frontend.",
       tags: ["testing", "first-post"],
