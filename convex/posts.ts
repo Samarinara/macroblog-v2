@@ -1,11 +1,15 @@
-import { mutation, query } from "./_generated/server";
+import { mutation, query, action } from "./_generated/server";
 import { v } from "convex/values";
-
+import { api } from "./_generated/api";
+import { Doc } from "./_generated/dataModel";
+import type { Id } from "./_generated/dataModel";
+// Create a new post
 export const createPost = mutation({
   args: {
     title: v.string(),
-    content: v.string(),
-    tags: v.array(v.string())
+    storageId: v.id("_storage"),
+    tags: v.array(v.string()),
+    excerpt: v.optional(v.string()),
   },
   handler: async (ctx, args) => {
     const identity = await ctx.auth.getUserIdentity();
@@ -21,24 +25,55 @@ export const createPost = mutation({
     if (!user) {
       throw new Error("User not found.");
     }
-    const postId = await ctx.db.insert("posts", {
+    await ctx.db.insert("posts", {
       title: args.title,
-      content: args.content,
+      storageId: args.storageId,
       tags: args.tags,
-      userId: user._id, // This was authorId in schema, now corrected
-      comments: [], // Initialize as empty
-      likes: [],
+      excerpt: args.excerpt,
+      userId: user._id,
       createdAt: Date.now(),
-      updatedAt: Date.now()
     });
-    console.log("Post created with ID:", postId);
-    return postId;
   },
 });
 
-export const get = query({
-  args: {},
-  handler: async (ctx) => {
-    return await ctx.db.query("posts").collect();
+// Get a single post by its ID (without content)
+export const getById = query({
+  args: { postId: v.id("posts") },
+  handler: async (ctx, args) => {
+    return await ctx.db.get(args.postId);
+  },
+});
+
+// New action to get a post and its content from file storage
+export const getPostWithContent = action({
+  args: { postId: v.id("posts") },
+  handler: async (
+    ctx,
+    args,
+  ): Promise<(Doc<"posts"> & { content: string }) | null> => {
+    // First, run the query to get the post document
+    const post: Doc<"posts"> | null = await ctx.runQuery(api.posts.getById, { postId: args.postId });
+    if (!post) {
+      return null;
+    }
+    // Then, get the file content from storage. This is only allowed in actions.
+    const content: Blob | null = await ctx.storage.get(post.storageId);
+    if (content === null) {
+      return { ...post, content: "File content not found." };
+    }
+    const textContent = await content.text();
+    return { ...post, content: textContent };
+  },
+});
+
+// Get all posts for a specific user (without content)
+export const getUsersPosts = query({
+  args: { userId: v.id("users") },
+  handler: async (ctx, args) => {
+    return await ctx.db
+      .query("posts")
+      .withIndex("by_userId", (q) => q.eq("userId", args.userId))
+      .order("desc")
+      .collect();
   },
 });

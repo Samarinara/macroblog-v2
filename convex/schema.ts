@@ -16,26 +16,19 @@ export default defineSchema({
 
   posts: defineTable({
     userId: v.id("users"), // Reverted to required after migration
-    content: v.string(),
+    storageId: v.id("_storage"),
+    excerpt: v.optional(v.string()),
     createdAt: v.number(),
-    updatedAt: v.number(),
-    comments: v.array(v.id("Comment")),
-    likes: v.array(v.id("Like")),
     tags: v.array(v.string()),
     title: v.string(),
   })
-    .index("byAuthor", ["userId"])
-    .index("byTags", ["tags"])
-    .index("byCreatedAt", ["createdAt"])
+    .index("by_userId", ["userId"])
     ,
 
   bios: defineTable({
     userId: v.string(),
     content: v.string()
   }).index("byUserId", ["userId"]),
-
-
-
 
   Comment: defineTable({
     userId: v.id("users"),

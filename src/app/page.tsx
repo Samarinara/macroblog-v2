@@ -1,7 +1,6 @@
 "use client";
  
 import { useRouter } from "next/navigation";
-import { useMutation } from "convex/react";
 import { useQuery } from "convex/react";
 import { api } from "convex/_generated/api";
 
@@ -14,6 +13,7 @@ import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
 import { Card } from "@/components/ui/card"
 import { Skeleton } from "@/components/ui/skeleton"
+import { useMutation } from "convex/react";
 import StoreUser from "./StoreUser";
 
 const FeaturedUsers: string[] = ["samkatevatis@gmail.com", "samkatevatis@usernametaken.net"]
@@ -61,12 +61,22 @@ function FeaturedUserCard({ email }: { email: string }) {
 }
 
 export default function Homepage() {
+  const generateUploadUrl = useMutation(api.files.generateUploadUrl);
   const createPost = useMutation(api.posts.createPost); 
 
   const handleAddPost = async () => {
+    // 1. Get an upload URL
+    const uploadUrl = await generateUploadUrl();
+    // 2. Create dummy markdown content and upload it
+    const dummyContent = "# Hello World\n\nThis is a dummy post created from the frontend using file storage. It supports **markdown**!";
+    const dummyFile = new File([dummyContent], "dummy.md", { type: "text/markdown" });
+    const result = await fetch(uploadUrl, { method: "POST", body: dummyFile });
+    const { storageId } = await result.json();
+    // 3. Create the post with the new storageId
     await createPost({
       title: "My First Post!",
-      content: "This is a dummy post created from the frontend.",
+      storageId,
+      excerpt: "This is a dummy post created from the frontend.",
       tags: ["testing", "first-post"],
     });
   }
