@@ -7,7 +7,7 @@ import { Card } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 
  
-export default function AuthorPage({ params }: { params: { author: string } }) {
+export default function AuthorPage({ params }: { params: Promise<{ author: string }> }) {
     const { author } = use(params);
     const authorsData = useQuery(api.users.getUserByUsername, { username: author });
 
