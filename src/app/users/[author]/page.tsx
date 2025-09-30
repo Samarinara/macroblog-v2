@@ -29,7 +29,12 @@ export default function AuthorPage({ params }: { params: Promise<{ author: strin
         return <div className="flex justify-center items-center w-screen h-screen">Author "{author}" not found.</div>;
     }
 
+    // This check is redundant given the checks above, but it satisfies TypeScript's
+    // strict null checks and ensures authorData is not undefined.
     const authorData = authorsData[0];
+    if (!authorData) {
+        return null; // Or a more specific error/not-found component
+    }
 
     return (
         <div className="flex justify-center items-center w-screen h-screen bg-gray-100">
