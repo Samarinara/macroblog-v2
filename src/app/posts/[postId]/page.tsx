@@ -15,8 +15,7 @@ import { Skeleton } from "@/components/ui/skeleton";
  
  export default function PostPage({
    params,
- }: { params: { postId: string } }) {
-  //the use() is required here
+ }: { params: Promise<{ postId: string }> }) {
    const { postId } = use(params);
    // We need to use `useAction` for actions.
    // Since useAction doesn't return data directly, we'll manage state ourselves.
