@@ -26,7 +26,7 @@ export default function AuthorPage({ params }: { params: Promise<{ author: strin
 
     // 2. Handle the "not found" state
     if (authorsData.length === 0) {
-        return <div className="flex justify-center items-center w-screen h-screen">Author "{author}" not found.</div>;
+        return <div className="flex justify-center items-center w-screen h-screen">Author &quot;{author}&quot; not found.</div>;
     }
 
     // This check is redundant given the checks above, but it satisfies TypeScript's

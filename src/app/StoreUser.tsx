@@ -8,7 +8,7 @@ export default function StoreUser() {
   const store = useMutation(api.users.store);
 
   useEffect(() => {
-    store({});
+    void store({});
   }, [store]);
   return null;
 }
