@@ -1,6 +1,6 @@
 "use client";
-import "./page.css"
  
+import { useRouter } from "next/navigation";
 import { useMutation } from "convex/react";
 import { useQuery } from "convex/react";
 import { api } from "convex/_generated/api";
@@ -14,10 +14,12 @@ import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
 import { Card } from "@/components/ui/card"
 import { Skeleton } from "@/components/ui/skeleton"
+import StoreUser from "./StoreUser";
 
 const FeaturedUsers: string[] = ["samkatevatis@gmail.com", "samkatevatis@usernametaken.net"]
 
 function FeaturedUserCard({ email }: { email: string }) {
+  const router = useRouter();
   const users = useQuery(api.users.getUserByEmail, { email });
 
   // `users` is `undefined` while loading.
@@ -39,8 +41,18 @@ function FeaturedUserCard({ email }: { email: string }) {
     </Card>;
   }
 
+  const handleCardClick = () => {
+    if (user.username) {
+      router.push(`/users/${user.username}`);
+    }
+  };
+
   return (
-    <Card className="p-10 m-[2vh] sm:w-[45vw] lg:hover:scale-102 transition-transform" key={user._id}>
+    <Card
+      className="p-10 m-[2vh] sm:w-[45vw] lg:hover:scale-102 transition-transform cursor-pointer"
+      key={user._id}
+      onClick={handleCardClick}
+    >
       <h1 className="text-3xl sm:text-2xl ">{user.displayName}</h1>
       <p>{user.bio}</p>
       <p>{user.email}</p>
@@ -71,6 +83,7 @@ export default function Homepage() {
               </SignUpButton>
             </Unauthenticated>
             <Authenticated>
+              <StoreUser />
               <UserButton />
             </Authenticated>
           </header>        

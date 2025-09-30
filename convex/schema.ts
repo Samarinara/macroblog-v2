@@ -7,13 +7,15 @@ export default defineSchema({
     displayName: v.string(),
     email: v.string(),
     password: v.string(),
+    tokenIdentifier: v.string(),
     username: v.string(),
   })
     .index("byEmail", ["email"])
-    .index("byUsername", ["username"]),
+    .index("byUsername", ["username"])
+    .index("by_token", ["tokenIdentifier"]),
 
   posts: defineTable({
-    authorId: v.string(),
+    userId: v.id("users"), // Reverted to required after migration
     content: v.string(),
     createdAt: v.number(),
     updatedAt: v.number(),
@@ -22,7 +24,7 @@ export default defineSchema({
     tags: v.array(v.string()),
     title: v.string(),
   })
-    .index("byAuthor", ["authorId"])
+    .index("byAuthor", ["userId"])
     .index("byTags", ["tags"])
     .index("byCreatedAt", ["createdAt"])
     ,
@@ -35,13 +37,19 @@ export default defineSchema({
 
 
 
-  comments: defineTable({
-    authorId: v.string(),
+  Comment: defineTable({
+    userId: v.id("users"),
     content: v.string(),
     createdAt: v.number(),
     updatedAt: v.number(),
-    comments: v.array(v.id("Comment")),
-    postId: v.string(),
-  }),
+    // For nested comments
+    comments: v.optional(v.array(v.id("Comment"))),
+    postId: v.id("posts"),
+  }).index("byPostId", ["postId"]),
+
+  Like: defineTable({
+    userId: v.id("users"),
+    postId: v.id("posts"),
+  }).index("by_user_post", ["userId", "postId"]),
 
 });
