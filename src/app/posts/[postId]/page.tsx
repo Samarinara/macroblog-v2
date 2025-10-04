@@ -22,6 +22,13 @@ const rehypeHighlightAuto = rehypeHighlight as unknown as (
   ...args: any[]
 ) => any;
 
+interface CodeProps extends React.HTMLAttributes<HTMLElement> {
+  node?: object;
+  inline?: boolean;
+  className?: string;
+  children?: React.ReactNode;
+}
+
 function MarkdownRenderer({ content }: { content: string }) {
   return (
     <article className="prose lg:prose-xl max-w-none mt-8 dark:prose-invert prose-pre:bg-transparent">
@@ -120,7 +127,7 @@ function MarkdownRenderer({ content }: { content: string }) {
           pre: ({ node, ...props }) => (
             <pre className="my-4 overflow-x-auto rounded-lg border border-gray-200 dark:border-zinc-800" {...props} />
           ),
-          code: ({ inline, className, children, ...props }) => {
+          code: ({ node, inline, className, children, ...props }: CodeProps) => {
             if (inline) {
               return (
                 <code
@@ -215,24 +222,9 @@ export default function PostPage({
                       @{author.username}
                     </p>
                   </Link>
-                  <p className="text-gray-600 mt-4 text-sm">{author.bio}</p>
-                  <hr className="my-4" />
-                  <p className="text-xs text-gray-400">
-                    Published on {new Date(post.createdAt).toLocaleDateString()}
-                  </p>
-                  <div className="flex flex-wrap gap-2 mt-3">
-                    {post.tags.map((tag) => (
-                      <span
-                        key={tag}
-                        className="text-xs bg-gray-200 text-gray-700 px-2 py-1 rounded-full"
-                      >
-                        {tag}
-                      </span>
-                    ))}
-                  </div>
                 </>
               ) : (
-                <Skeleton className="h-40 w-full bg-emerald-300" />
+                <Skeleton className="h-8 w-32 bg-emerald-300" />
               )}
             </Card>
           </div>
