@@ -1,5 +1,6 @@
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
+import { type Pluggable } from "unified";
 import rehypeHighlight from "rehype-highlight";
 import rehypeSlug from "rehype-slug";
 import rehypeAutolinkHeadings from "rehype-autolink-headings";
@@ -10,7 +11,11 @@ type MarkdownRendererProps = {
   content: string;
 };
 
-const rehypeHighlightAuto = rehypeHighlight as unknown as (...args: unknown[]) => unknown;
+const rehypePlugins: Pluggable[] = [
+  rehypeSlug,
+  [rehypeAutolinkHeadings, { behavior: "append", properties: { className: "anchor" } }],
+  [rehypeHighlight, { detect: true, ignoreMissing: true }],
+];
 
 export function MarkdownRenderer({ content }: MarkdownRendererProps) {
   return (
@@ -19,30 +24,26 @@ export function MarkdownRenderer({ content }: MarkdownRendererProps) {
         // GFM: tables, task lists, autolinks, strikethrough, footnotes
         remarkPlugins={[remarkGfm]}
         // Headings get ids + self-links; code fences get hljs classes
-        rehypePlugins={[
-          rehypeSlug,
-          [rehypeAutolinkHeadings as any, { behavior: "append", properties: { className: "anchor" } }],
-          [rehypeHighlightAuto as any, { detect: true, ignoreMissing: true }],
-        ]}
+        rehypePlugins={rehypePlugins}
         // Map HTML tags to styled components so things look correct even without the Tailwind typography plugin
         components={{
           // Headings
-          h1: ({ node, ...props }) => <h1 className="mt-8 mb-4 text-4xl font-bold tracking-tight" {...props} />,
-          h2: ({ node, ...props }) => <h2 className="mt-8 mb-3 text-3xl font-semibold" {...props} />,
-          h3: ({ node, ...props }) => <h3 className="mt-6 mb-2 text-2xl font-semibold" {...props} />,
-          h4: ({ node, ...props }) => <h4 className="mt-6 mb-2 text-xl font-semibold" {...props} />,
-          h5: ({ node, ...props }) => <h5 className="mt-4 mb-2 text-lg font-semibold" {...props} />,
-          h6: ({ node, ...props }) => <h6 className="mt-4 mb-2 text-base font-semibold uppercase tracking-wide" {...props} />,
+          h1: ({ node: _node, ...props }) => <h1 className="mt-8 mb-4 text-4xl font-bold tracking-tight" {...props} />,
+          h2: ({ node: _node, ...props }) => <h2 className="mt-8 mb-3 text-3xl font-semibold" {...props} />,
+          h3: ({ node: _node, ...props }) => <h3 className="mt-6 mb-2 text-2xl font-semibold" {...props} />,
+          h4: ({ node: _node, ...props }) => <h4 className="mt-6 mb-2 text-xl font-semibold" {...props} />,
+          h5: ({ node: _node, ...props }) => <h5 className="mt-4 mb-2 text-lg font-semibold" {...props} />,
+          h6: ({ node: _node, ...props }) => <h6 className="mt-4 mb-2 text-base font-semibold uppercase tracking-wide" {...props} />,
 
           // Paragraphs and emphasis
-          p: ({ node, ...props }) => <p className="leading-7" {...props} />,
-          strong: ({ node, ...props }) => <strong className="font-semibold" {...props} />,
-          em: ({ node, ...props }) => <em className="italic" {...props} />,
-          del: ({ node, ...props }) => <del className="line-through" {...props} />,
+          p: ({ node: _node, ...props }) => <p className="leading-7" {...props} />,
+          strong: ({ node: _node, ...props }) => <strong className="font-semibold" {...props} />,
+          em: ({ node: _node, ...props }) => <em className="italic" {...props} />,
+          del: ({ node: _node, ...props }) => <del className="line-through" {...props} />,
           hr: () => <hr className="my-8 border-t border-gray-200 dark:border-zinc-800" />,
 
           // Links
-          a: ({ node, href, ...props }) => {
+          a: ({ node: _node, href, ...props }) => {
             const isInternal = href?.startsWith("/") || href?.startsWith("#");
             if (isInternal) {
               // Avoid importing next/link here; the page can wrap content or leave normal <a> for anchors
@@ -60,12 +61,12 @@ export function MarkdownRenderer({ content }: MarkdownRendererProps) {
           },
 
           // Images
-          img: ({ node, ...props }) => (
+          img: ({ node: _node, ...props }) => (
             <img className="rounded-md border border-gray-200 dark:border-zinc-800 max-w-full" {...props} />
           ),
 
           // Blockquotes
-          blockquote: ({ node, ...props }) => (
+          blockquote: ({ node: _node, ...props }) => (
             <blockquote
               className="mt-6 mb-6 border-l-4 border-gray-300 dark:border-zinc-700 pl-4 italic text-gray-700 dark:text-zinc-300"
               {...props}
@@ -73,13 +74,13 @@ export function MarkdownRenderer({ content }: MarkdownRendererProps) {
           ),
 
           // Lists
-          ul: ({ node, className, ...props }) => (
+          ul: ({ node: _node, className, ...props }) => (
             <ul className="list-disc pl-6 my-4 space-y-2 marker:text-gray-500" {...props} />
           ),
-          ol: ({ node, className, ...props }) => (
+          ol: ({ node: _node, className, ...props }) => (
             <ol className="list-decimal pl-6 my-4 space-y-2 marker:text-gray-500" {...props} />
           ),
-          li: ({ node, className, children, ...props }) => {
+          li: ({ node: _node, className, children, ...props }) => {
             const isTask = typeof className === "string" && className.includes("task-list-item");
             return (
               <li
@@ -93,7 +94,7 @@ export function MarkdownRenderer({ content }: MarkdownRendererProps) {
               </li>
             );
           },
-          input: ({ node, ...props }) => (
+          input: ({ node: _node, ...props }) => (
             <input
               {...props}
               disabled
@@ -103,23 +104,23 @@ export function MarkdownRenderer({ content }: MarkdownRendererProps) {
           ),
 
           // Tables
-          table: ({ node, ...props }) => (
+          table: ({ node: _node, ...props }) => (
             <div className="my-6 overflow-x-auto">
               <table className="w-full text-left border-collapse" {...props} />
             </div>
           ),
-          thead: ({ node, ...props }) => <thead className="bg-gray-50 dark:bg-zinc-900/40" {...props} />,
-          tbody: ({ node, ...props }) => <tbody {...props} />,
-          tr: ({ node, ...props }) => (
+          thead: ({ node: _node, ...props }) => <thead className="bg-gray-50 dark:bg-zinc-900/40" {...props} />,
+          tbody: ({ node: _node, ...props }) => <tbody {...props} />,
+          tr: ({ node: _node, ...props }) => (
             <tr className="border-b border-gray-200 dark:border-zinc-800" {...props} />
           ),
-          th: ({ node, ...props }) => (
+          th: ({ node: _node, ...props }) => (
             <th className="px-3 py-2 font-semibold text-gray-700 dark:text-zinc-200" {...props} />
           ),
-          td: ({ node, ...props }) => <td className="px-3 py-2 align-top" {...props} />,
+          td: ({ node: _node, ...props }) => <td className="px-3 py-2 align-top" {...props} />,
 
           // Code
-          pre: ({ node, ...props }) => (
+          pre: ({ node: _node, ...props }) => (
             <pre className="my-4 overflow-x-auto rounded-lg border border-gray-200 dark:border-zinc-800" {...props} />
           ),
           code: ({
