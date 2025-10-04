@@ -3,15 +3,13 @@
 import { useState, type FormEvent } from "react";
 import { useRouter } from "next/navigation";
 import { useQuery } from "convex/react";
-import { api } from "convex/_generated/api";
-import { useMutation } from "convex/react";
-import { Authenticated, Unauthenticated } from "convex/react";
-import { SignInButton, SignUpButton } from "@clerk/nextjs";
+import { api } from "convex/_generated/api"; 
+import { Unauthenticated } from "convex/react";
+import { SignUpButton } from "@clerk/nextjs";
 import Header from "./Header";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { ChevronDown, Search } from "lucide-react";
-import Link from "next/link";
+import { ChevronDown, Search } from "lucide-react"; 
 import { Card } from "@/components/ui/card";
 
 function UserCard({ user }: { user: any }) {
@@ -32,38 +30,7 @@ function UserCard({ user }: { user: any }) {
   );
 }
 
-function PostCard({ post }: { post: any }) {
-  const router = useRouter();
- 
-  if (!post.author) {
-    return null;
-  }
- 
-  return (
-    <div className="bg-white dark:bg-zinc-800 rounded-lg shadow-md overflow-hidden hover:shadow-xl transition-shadow duration-300">
-      <div className="p-6">
-        <div className="flex items-center mb-4">
-          <div className="ml-4">
-            <p className="text-sm font-medium text-gray-900 dark:text-gray-100">{post.author.displayName}</p>
-            <p className="text-sm text-gray-500 dark:text-gray-400">@{post.author.username}</p>
-          </div>
-        </div>
-        <h2 className="text-2xl font-bold mb-2 text-gray-900 dark:text-gray-100">{post.title}</h2>
-        <p className="text-gray-700 dark:text-gray-300 mb-4">{post.excerpt}</p>
-        <div className="flex flex-wrap gap-2">
-          {post.tags.map((tag: string) => (
-            <span key={tag} className="bg-emerald-100 text-emerald-800 text-xs font-medium px-2.5 py-0.5 rounded-full dark:bg-emerald-900 dark:text-emerald-300">
-              {tag}
-            </span>
-          ))}
-        </div>
-      </div>
-    </div>
-  );
-}
- 
 export default function Homepage() {
-  const generateUploadUrl = useMutation(api.files.generateUploadUrl);
   const [query, setQuery] = useState("");
   const router = useRouter();
  
@@ -73,14 +40,12 @@ export default function Homepage() {
       router.push(`/search?q=${encodeURIComponent(query.trim())}`);
     }
   };
-  const createPost = useMutation(api.posts.createPost); 
  
-  const posts = useQuery(api.posts.getWithUsers);
   const featuredUsersByEmail = useQuery(api.users.getByEmails, { 
     emails: ["samkatevatis@gmail.com", "yaugustlam@gmail.com"] 
   });
 
-  const featuredUsers = featuredUsersByEmail?.filter((user): user is NonNullable<typeof user> => user !== null);
+  const featuredUsers = featuredUsersByEmail?.filter((user): user is NonNullable<typeof user> => user !== null) ?? [];
  
   return (
     <>
@@ -116,7 +81,7 @@ export default function Homepage() {
       <div id="featured-users" className="container mx-auto px-4 py-12 scroll-mt-20">
         <h2 className="text-3xl font-bold text-center mb-8">Featured Bloggers</h2>
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-          {featuredUsers?.map((user) => (
+          {featuredUsers.map((user) => (
             <UserCard key={user._id} user={user} />
           ))}
         </div>
