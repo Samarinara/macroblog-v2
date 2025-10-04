@@ -42,7 +42,7 @@ export default function Homepage() {
   };
  
   const featuredUsersByEmail = useQuery(api.users.getByEmails, { 
-    emails: ["samkatevatis@gmail.com", "yaugustlam@gmail.com"] 
+    emails: ["samkatevatis@gmail.com", "yaugustlam@gmail.com", "benjamin@kerrfamily.ca", "sunnyhe848@gmail.com"] 
   });
 
   const featuredUsers = featuredUsersByEmail?.filter((user): user is NonNullable<typeof user> => user !== null) ?? [];
