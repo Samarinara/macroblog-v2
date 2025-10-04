@@ -20,6 +20,7 @@ import Header from "../Header";
 import { SignInButton, SignUpButton } from "@clerk/nextjs";
 import { api } from "../../../convex/_generated/api";
 import { Textarea } from "@/components/ui/textarea";
+import { type Id } from "../../../convex/_generated/dataModel";
 
 
 export default function Upload(){
@@ -55,7 +56,7 @@ export default function Upload(){
             // 3. Create the post with the new storageId
             await createPost({
                 title,
-                storageId,
+                storageId: storageId as Id<"_storage">,
                 excerpt,
                 tags: tags.split(",").map(tag => tag.trim()).filter(Boolean),
             });

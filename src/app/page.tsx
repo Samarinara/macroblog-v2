@@ -75,7 +75,7 @@ export default function Homepage() {
     // 3. Create the post with the new storageId
     await createPost({
       title: "My First Post!",
-      storageId,
+      storageId: storageId as any,
       excerpt: "This is a dummy post created from the frontend.",
       tags: ["testing", "first-post"],
     });
