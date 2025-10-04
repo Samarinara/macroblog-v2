@@ -62,14 +62,22 @@ export function MarkdownRenderer({ content }: MarkdownRendererProps) {
           },
 
           // Images
-          img: ({ node: _node, src, alt, ...props }) => (
-            <Image
-              className="rounded-md border border-gray-200 dark:border-zinc-800 max-w-full h-auto"
-              src={src ?? ""}
-              alt={alt ?? ""}
-              {...props}
-            />
-          ),
+          img: ({ node: _node, src, alt }) => {
+            if (typeof src !== "string") {
+              return null; // Or a placeholder/error component
+            }
+            return (
+              <span className="block my-6">
+                <Image
+                  className="rounded-md border border-gray-200 dark:border-zinc-800 max-w-full h-auto"
+                  src={src}
+                  width={700}
+                  height={400}
+                  alt={alt ?? ""}
+                />
+              </span>
+            );
+          },
 
           // Blockquotes
           blockquote: ({ node: _node, ...props }) => (
