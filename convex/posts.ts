@@ -35,6 +35,28 @@ export const createPost = mutation({
   },
 });
 
+// Get all posts
+export const get = query({
+  args: {},
+  handler: async (ctx) => {
+    return await ctx.db.query("posts").order("desc").collect();
+  },
+});
+
+// Get all posts with their author's information
+export const getWithUsers = query({
+  args: {},
+  handler: async (ctx) => {
+    const posts = await ctx.db.query("posts").order("desc").collect();
+    return Promise.all(
+      posts.map(async (post) => {
+        const user = await ctx.db.get(post.userId);
+        return { ...post, author: user };
+      })
+    );
+  },
+});
+
 // Get a single post by its ID (without content)
 export const getById = query({
   args: { postId: v.id("posts") },

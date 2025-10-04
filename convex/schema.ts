@@ -7,12 +7,14 @@ export default defineSchema({
     displayName: v.string(),
     email: v.string(),
     password: v.string(),
+    searchField: v.optional(v.string()),
     tokenIdentifier: v.string(),
     username: v.string(),
   })
     .index("byEmail", ["email"])
     .index("byUsername", ["username"])
-    .index("by_token", ["tokenIdentifier"]),
+    .index("by_token", ["tokenIdentifier"])
+    .searchIndex("by_username_or_displayname", { searchField: "searchField" }),
 
   posts: defineTable({
     userId: v.id("users"), // Reverted to required after migration
@@ -21,9 +23,7 @@ export default defineSchema({
     createdAt: v.number(),
     tags: v.array(v.string()),
     title: v.string(),
-  })
-    .index("by_userId", ["userId"])
-    ,
+  }).index("by_userId", ["userId"]),
 
   bios: defineTable({
     userId: v.string(),

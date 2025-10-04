@@ -27,11 +27,13 @@ export const store = mutation({
     }
 
     // If it's a new user, create a new document.
+    const name = identity.name!;
     return await ctx.db.insert("users", {
-      displayName: identity.name!,
+      displayName: name,
       email: identity.email!,
       username: identity.nickname!,
       bio: "",
+      searchField: `${name} ${identity.nickname!}`,
       password: "", // It's best not to store passwords directly. Consider removing if not needed.
       tokenIdentifier: identity.tokenIdentifier,
     });
@@ -55,6 +57,18 @@ export const getUserByEmail = query({
   },
 });
 
+export const getByEmails = query({
+  args: { emails: v.array(v.string()) },
+  handler: async (ctx, args) => {
+    const users = await Promise.all(
+      args.emails.map((email) =>
+        ctx.db.query("users").withIndex("byEmail", (q) => q.eq("email", email)).unique()
+      )
+    );
+    return users;
+  },
+});
+
 export const getUserByUsername = query({
   args: { username: v.string() },
   handler: async (ctx, args) => {
@@ -70,5 +84,20 @@ export const getUserById = query({
   handler: async (ctx, args) => {
     const user = await ctx.db.get(args.userId);
     return user;
+  },
+});
+
+export const search = query({
+  args: { query: v.string() },
+  handler: async (ctx, args) => {
+    if (!args.query) {
+      return [];
+    }
+    return await ctx.db
+      .query("users")
+      .withSearchIndex("by_username_or_displayname", (q) =>
+        q.search("searchField", args.query)
+      )
+      .take(20); // Limit to 20 results
   },
 });

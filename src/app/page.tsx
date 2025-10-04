@@ -1,45 +1,21 @@
 "use client";
  
+import { useState, type FormEvent } from "react";
 import { useRouter } from "next/navigation";
 import { useQuery } from "convex/react";
 import { api } from "convex/_generated/api";
-
-import { Authenticated, Unauthenticated } from "convex/react";
-import { SignInButton, SignUpButton, UserButton } from "@clerk/nextjs";
-
-import { Search } from "@mui/icons-material"
-
-import { Input } from "@/components/ui/input"
-import { Button } from "@/components/ui/button"
-import { Card } from "@/components/ui/card"
-import { Skeleton } from "@/components/ui/skeleton"
 import { useMutation } from "convex/react";
-import StoreUser from "./StoreUser";
+import { Authenticated, Unauthenticated } from "convex/react";
+import { SignInButton, SignUpButton } from "@clerk/nextjs";
+import Header from "./Header";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { ChevronDown, Search } from "lucide-react";
+import Link from "next/link";
+import { Card } from "@/components/ui/card";
 
-const FeaturedUsers: string[] = ["samkatevatis@gmail.com", "yaugustlam@gmail.com"]
-
-function FeaturedUserCard({ email }: { email: string }) {
+function UserCard({ user }: { user: any }) {
   const router = useRouter();
-  const users = useQuery(api.users.getUserByEmail, { email });
-
-  // `users` is `undefined` while loading.
-  if (users === undefined) {
-    // While the user data is loading, or if the user is not found,
-    // we can show a loading message or a skeleton component.
-    return <Card className="p-10 m-[2vh] sm:w-[45vw]">
-      <Skeleton className="bg-emerald-900"></Skeleton>
-    </Card>;
-  }
-
-  // The query returns an array, so we take the first element.
-  const user = users[0];
-
-  // If the query returns an empty array, the user was not found.
-  if (!user) {
-    return <Card className="p-10 m-[2vh] sm:w-[45vw]">
-      User with email {email} not found.
-    </Card>;
-  }
 
   const handleCardClick = () => {
     if (user.username) {
@@ -48,82 +24,103 @@ function FeaturedUserCard({ email }: { email: string }) {
   };
 
   return (
-    <Card
-      className="p-10 m-[2vh] sm:w-[45vw] lg:hover:scale-102 transition-transform cursor-pointer"
-      key={user._id}
-      onClick={handleCardClick}
-    >
-      <h1 className="text-3xl sm:text-2xl ">{user.displayName}</h1>
-      <p>{user.bio}</p>
-      <p>{user.email}</p>
+    <Card className="p-4 flex flex-col items-center text-center hover:shadow-lg transition-shadow cursor-pointer" onClick={handleCardClick}>
+      <h3 className="text-lg font-semibold">{user.displayName}</h3>
+      <p className="text-sm text-gray-500 dark:text-gray-400">@{user.username}</p>
+      <p className="mt-2 text-sm text-gray-600 dark:text-gray-300 line-clamp-2">{user.bio}</p>
     </Card>
   );
 }
 
+function PostCard({ post }: { post: any }) {
+  const router = useRouter();
+ 
+  if (!post.author) {
+    return null;
+  }
+ 
+  return (
+    <div className="bg-white dark:bg-zinc-800 rounded-lg shadow-md overflow-hidden hover:shadow-xl transition-shadow duration-300">
+      <div className="p-6">
+        <div className="flex items-center mb-4">
+          <div className="ml-4">
+            <p className="text-sm font-medium text-gray-900 dark:text-gray-100">{post.author.displayName}</p>
+            <p className="text-sm text-gray-500 dark:text-gray-400">@{post.author.username}</p>
+          </div>
+        </div>
+        <h2 className="text-2xl font-bold mb-2 text-gray-900 dark:text-gray-100">{post.title}</h2>
+        <p className="text-gray-700 dark:text-gray-300 mb-4">{post.excerpt}</p>
+        <div className="flex flex-wrap gap-2">
+          {post.tags.map((tag: string) => (
+            <span key={tag} className="bg-emerald-100 text-emerald-800 text-xs font-medium px-2.5 py-0.5 rounded-full dark:bg-emerald-900 dark:text-emerald-300">
+              {tag}
+            </span>
+          ))}
+        </div>
+      </div>
+    </div>
+  );
+}
+ 
 export default function Homepage() {
   const generateUploadUrl = useMutation(api.files.generateUploadUrl);
+  const [query, setQuery] = useState("");
+  const router = useRouter();
+ 
+  const handleSearch = (e: FormEvent) => {
+    e.preventDefault();
+    if (query.trim()) {
+      router.push(`/search?q=${encodeURIComponent(query.trim())}`);
+    }
+  };
   const createPost = useMutation(api.posts.createPost); 
+ 
+  const posts = useQuery(api.posts.getWithUsers);
+  const featuredUsersByEmail = useQuery(api.users.getByEmails, { 
+    emails: ["samkatevatis@gmail.com", "yaugustlam@gmail.com"] 
+  });
 
-  const handleAddPost = async () => {
-    // 1. Get an upload URL
-    const uploadUrl = await generateUploadUrl();
-    // 2. Create dummy markdown content and upload it
-    const dummyContent = "# Hello World\n\nThis is a dummy post created from the frontend using file storage. It supports **markdown**!";
-    const dummyFile = new File([dummyContent], "dummy.md", { type: "text/markdown" });
-    const result = await fetch(uploadUrl, { method: "POST", body: dummyFile });
-    const { storageId }: { storageId: string } = await result.json();
-    // 3. Create the post with the new storageId
-    await createPost({
-      title: "My First Post!",
-      storageId: storageId as any,
-      excerpt: "This is a dummy post created from the frontend.",
-      tags: ["testing", "first-post"],
-    });
-  }
+  const featuredUsers = featuredUsersByEmail?.filter((user): user is NonNullable<typeof user> => user !== null);
+ 
   return (
-    <div className="grid lg:grid-cols-2 w-screen h-screen bg-gray-100 overflow-x-hidden">
-        <div className="absolute top-0 left-0 m-[2vw]">
-          <header className="flex justify-center items-center p-4 gap-4 h-16 bg-gray-100 rounded-full">
-            <Unauthenticated>
-              <SignInButton />
-              <SignUpButton>
-                <Button className="text-white rounded-full font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 cursor-pointer">
-                  Sign Up
-                </Button>
-              </SignUpButton>
-            </Unauthenticated>
-            <Authenticated>
-              <StoreUser />
-              <UserButton />
-            </Authenticated>
-          </header>        
-        </div>
+    <>
+      <Header />
       <div className="flex bg-green-900 justify-center items-center lg:text-[7vw] text-[15vw] text-white flex-col lg:h-[100vh] md:h-[40vh] h-[25vh] p-3">
         <h1>MACROBLOG</h1>
-        <div className="flex flex-row gap-4">
-          <Input placeholder="Search is not yet available" className="lg:w-[30vw] lg:h-[7vh] h-[5vh] w-[60vw] text-xl text-black bg-[#F8F5F0] border"/>
-          <Button className="h-[5vh] w-[20vw] lg:w-[5vw] lg:h-[7vh] "><Search></Search></Button>
-        </div>
+        <form onSubmit={handleSearch} className="flex flex-row gap-4">
+          <Input
+            placeholder="Search for users..."
+            className="lg:w-[30vw] lg:h-[7vh] h-[5vh] w-[60vw] text-xl text-black bg-[#F8F5F0] border"
+            value={query}
+            onChange={(e) => setQuery(e.target.value)}
+          />
+          <Button type="submit" className="h-[5vh] w-[20vw] lg:w-[5vw] lg:h-[7vh] "><Search /></Button>
+        </form>
         <div  className="-m-[1vh]">
           <Unauthenticated>
             <SignUpButton>
-              <Button className="h-[5vh] w-[20vw]">
-                Start Blogging
-              </Button>
-            </SignUpButton>               
+              <Button className="lg:h-[7vh] h-[5vh] w-[30vw] lg:w-[10vw]">Get Started</Button>
+            </SignUpButton>
           </Unauthenticated>
         </div>
+        <Button
+            variant="ghost"
+            className="absolute bottom-10 animate-bounce"
+            onClick={() => {
+              document.getElementById("featured-users")?.scrollIntoView({ behavior: "smooth" });
+            }}
+          >
+            <ChevronDown className="h-8 w-8" />
+        </Button>
       </div>
-      <div className="flex m-[1vw] lg:allign-center lg:justify-center flex-col sm:flex-row md:w-[50vw] w-[100vw] lg:overflow-x-hidden md:overflow-x-visible sm:overflow-x-hidden">
-        <Card className="lg:fixed bg-green-900 text-white p-4 m-[1vh] text-[3vh] lg:z-1 md:h-[15vh] lg:h-auto sm:h-[12vh]">
-          <h1>Featured Blogs</h1>
-        </Card>
-        <ul>
-          {FeaturedUsers.map((email) => (
-            <li key={email}><FeaturedUserCard email={email} /></li>
+      <div id="featured-users" className="container mx-auto px-4 py-12 scroll-mt-20">
+        <h2 className="text-3xl font-bold text-center mb-8">Featured Bloggers</h2>
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+          {featuredUsers?.map((user) => (
+            <UserCard key={user._id} user={user} />
           ))}
-        </ul>
+        </div>
       </div>
-    </div>
+    </>
   );
 }
