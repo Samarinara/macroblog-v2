@@ -16,7 +16,7 @@ import { Skeleton } from "@/components/ui/skeleton"
 import { useMutation } from "convex/react";
 import StoreUser from "./StoreUser";
 
-const FeaturedUsers: string[] = ["samkatevatis@gmail.com"]
+const FeaturedUsers: string[] = ["samkatevatis@gmail.com", "yaugustlam@gmail.com"]
 
 function FeaturedUserCard({ email }: { email: string }) {
   const router = useRouter();
