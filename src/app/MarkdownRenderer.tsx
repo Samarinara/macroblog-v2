@@ -10,7 +10,6 @@ type MarkdownRendererProps = {
   content: string;
 };
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
 const rehypeHighlightAuto = rehypeHighlight as unknown as (...args: unknown[]) => unknown;
 
 export function MarkdownRenderer({ content }: MarkdownRendererProps) {
@@ -22,9 +21,7 @@ export function MarkdownRenderer({ content }: MarkdownRendererProps) {
         // Headings get ids + self-links; code fences get hljs classes
         rehypePlugins={[
           rehypeSlug,
-          // eslint-disable-next-line @typescript-eslint/no-explicit-any
           [rehypeAutolinkHeadings as any, { behavior: "append", properties: { className: "anchor" } }],
-          // eslint-disable-next-line @typescript-eslint/no-explicit-any
           [rehypeHighlightAuto as any, { detect: true, ignoreMissing: true }],
         ]}
         // Map HTML tags to styled components so things look correct even without the Tailwind typography plugin
