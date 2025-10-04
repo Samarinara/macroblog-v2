@@ -35,7 +35,7 @@ function SearchResults() {
   const searchParams = useSearchParams();
   const query = searchParams.get("q");
 
-  const users = useQuery(api.users.search, { query: query || "" });
+  const users = useQuery(api.users.search, { query: query ?? "" });
 
   if (users === undefined) {
     return (
