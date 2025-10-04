@@ -10,14 +10,8 @@ type MarkdownRendererProps = {
   content: string;
 };
 
-const rehypeHighlightAuto = rehypeHighlight as unknown as (...args: any[]) => any;
-
-interface CodeProps extends React.HTMLAttributes<HTMLElement> {
-  node?: object;
-  inline?: boolean;
-  className?: string;
-  children?: React.ReactNode;
-}
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+const rehypeHighlightAuto = rehypeHighlight as unknown as (...args: unknown[]) => unknown;
 
 export function MarkdownRenderer({ content }: MarkdownRendererProps) {
   return (
@@ -28,7 +22,9 @@ export function MarkdownRenderer({ content }: MarkdownRendererProps) {
         // Headings get ids + self-links; code fences get hljs classes
         rehypePlugins={[
           rehypeSlug,
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
           [rehypeAutolinkHeadings as any, { behavior: "append", properties: { className: "anchor" } }],
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
           [rehypeHighlightAuto as any, { detect: true, ignoreMissing: true }],
         ]}
         // Map HTML tags to styled components so things look correct even without the Tailwind typography plugin
@@ -129,7 +125,12 @@ export function MarkdownRenderer({ content }: MarkdownRendererProps) {
           pre: ({ node, ...props }) => (
             <pre className="my-4 overflow-x-auto rounded-lg border border-gray-200 dark:border-zinc-800" {...props} />
           ),
-          code: ({ node, inline, className, children, ...props }: CodeProps) => {
+          code: ({
+            inline,
+            className,
+            children,
+            ...props
+          }: { inline?: boolean; className?: string; children?: React.ReactNode } & React.HTMLAttributes<HTMLElement>) => {
             if (inline) {
               return (
                 <code
