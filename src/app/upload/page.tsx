@@ -1,5 +1,6 @@
 "use client";
 import { useState, type FormEvent } from "react";
+import { toast } from "sonner";
 import { useRouter } from "next/navigation";
 import { Authenticated, Unauthenticated, useMutation } from "convex/react";
 import { Button } from "@/components/ui/button";
@@ -16,6 +17,7 @@ import {
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
+import { Loader2 } from "lucide-react";
 import Header from "../Header";
 import { SignInButton, SignUpButton } from "@clerk/nextjs";
 import { api } from "../../../convex/_generated/api";
@@ -37,7 +39,7 @@ export default function Upload(){
     async function handleSubmit(event: FormEvent) {
         event.preventDefault();
         if (!file) {
-            alert("Please select a markdown file to upload.");
+            toast.error("Please select a markdown file to upload.");
             return;
         }
         setIsSubmitting(true);
@@ -66,11 +68,11 @@ export default function Upload(){
             setExcerpt("");
             setTags("");
             setFile(null);
-            alert("Post created successfully!");
+            toast.success("Post created successfully!");
             router.push("/"); // or to the new post page
         } catch (error) {
             console.error("Error creating post:", error);
-            alert("Failed to create post.");
+            toast.error("Failed to create post.", { description: "Check the console for more details."});
         } finally {
             setIsSubmitting(false);
         }
@@ -79,12 +81,12 @@ export default function Upload(){
     return(
         <div>
             <Header></Header>
-            <div className="flex w-screen h-screen items-center justify-center align-center">
+            <div className="flex w-screen h-screen items-center justify-center">
                 <Card className="p-4">
                     <Authenticated>
                         <Dialog>
                             <DialogTrigger asChild>
-                                <Button variant="outline">Create New Post</Button>
+                                <Button variant="outline" className="bg-green-900 text-gray-100">Create New Post</Button>
                             </DialogTrigger>
                             <DialogContent className="sm:max-w-[425px]">
                                 <form onSubmit={handleSubmit}>
@@ -114,7 +116,11 @@ export default function Upload(){
                                     </div>
                                     <DialogFooter>
                                         <DialogClose asChild><Button type="button" variant="outline">Cancel</Button></DialogClose>
-                                        <Button type="submit" disabled={isSubmitting}>{isSubmitting ? "Creating..." : "Create Post"}</Button>
+                                        <Button type="submit" disabled={isSubmitting}>
+                                            {isSubmitting && (
+                                                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                                            )}
+                                            {isSubmitting ? "Creating..." : "Create Post"}</Button>
                                     </DialogFooter>
                                 </form>
                             </DialogContent>

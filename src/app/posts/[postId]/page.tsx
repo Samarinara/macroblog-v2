@@ -34,15 +34,18 @@ export default function PostPage({
 
   if (post === undefined || author === undefined) {
     return (
-      <div className="w-screen h-screen bg-gray-100">
+      <div className="w-screen min-h-screen bg-gray-50 dark:bg-zinc-900">
         <Header />
-        <div className="pt-[10vh] flex flex-col items-center justify-center">
-          <Card className="p-10 my-[2vh] w-[90vw] sm:w-[60%]">
-            <Skeleton className="h-10 w-3/4 mb-6 bg-emerald-300" />
-            <Skeleton className="h-4 w-full mb-2 bg-emerald-300" />
-            <Skeleton className="h-4 w-full mb-2 bg-emerald-300" />
-            <Skeleton className="h-4 w-5/6 bg-emerald-300" />
-          </Card>
+        <div className="pt-[10vh] container mx-auto px-4 py-8">
+          <div className="max-w-4xl mx-auto">
+            <Card className="p-10">
+              <Skeleton className="h-12 w-3/4 mb-4 bg-emerald-200 dark:bg-emerald-800" />
+              <Skeleton className="h-6 w-1/4 mb-8 bg-emerald-200 dark:bg-emerald-800" />
+              <Skeleton className="h-4 w-full mb-2 bg-emerald-200 dark:bg-emerald-800" />
+              <Skeleton className="h-4 w-full mb-2 bg-emerald-200 dark:bg-emerald-800" />
+              <Skeleton className="h-4 w-5/6 bg-emerald-200 dark:bg-emerald-800" />
+            </Card>
+          </div>
         </div>
       </div>
     );
@@ -50,9 +53,9 @@ export default function PostPage({
 
   if (post === null) {
     return (
-      <div className="w-screen h-screen bg-gray-100">
+      <div className="w-screen min-h-screen bg-gray-50 dark:bg-zinc-900">
         <Header />
-        <div className="pt-[10vh] flex flex-col items-center justify-center">
+        <div className="pt-[10vh] flex flex-col items-center justify-center h-[90vh]">
           <Card className="p-10 my-[2vh] w-[90vw] sm:w-[60%]">
             <h1 className="text-2xl font-bold">Post not found</h1>
           </Card>
@@ -62,11 +65,11 @@ export default function PostPage({
   }
 
   return (
-    <div className="w-screen min-h-screen bg-gray-100">
+    <div className="w-screen min-h-screen bg-gray-50 dark:bg-zinc-900">
       <Header />
       <div className="pt-[10vh] flex justify-center">
         <div className="w-[95vw] lg:w-[80vw] xl:w-[70vw] p-4 grid grid-cols-1 lg:grid-cols-3 lg:gap-8">
-          <div className="lg:col-span-2">
+          <main className="lg:col-span-2">
             <Card className="p-6 sm:p-10 my-[2vh] w-full mx-auto">
               <h1 className="text-3xl sm:text-4xl font-bold mb-2">
                 {post.title}
@@ -74,9 +77,9 @@ export default function PostPage({
               {/* All markdown features now supported */}
               <MarkdownRenderer content={post.content} />
             </Card>
-          </div>
+          </main>
 
-          <div className="lg:col-span-1">
+          <aside className="lg:col-span-1">
             <Card className="p-6 my-[2vh] w-full mx-auto lg:sticky lg:top-[12vh]">
               {author ? (
                 <>
@@ -88,10 +91,10 @@ export default function PostPage({
                   </Link>
                 </>
               ) : (
-                <Skeleton className="h-8 w-32 bg-emerald-300" />
+                <Skeleton className="h-8 w-32 bg-emerald-200 dark:bg-emerald-800" />
               )}
             </Card>
-          </div>
+          </aside>
         </div>
       </div>
     </div>
