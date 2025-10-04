@@ -71,7 +71,7 @@ export default function Homepage() {
     const dummyContent = "# Hello World\n\nThis is a dummy post created from the frontend using file storage. It supports **markdown**!";
     const dummyFile = new File([dummyContent], "dummy.md", { type: "text/markdown" });
     const result = await fetch(uploadUrl, { method: "POST", body: dummyFile });
-    const { storageId } = await result.json();
+    const { storageId }: { storageId: string } = await result.json();
     // 3. Create the post with the new storageId
     await createPost({
       title: "My First Post!",

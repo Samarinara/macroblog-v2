@@ -22,7 +22,9 @@ export default function PostPage({
   const [post, setPost] = useState<Post | null | undefined>(undefined);
 
   useEffect(() => {
-    getPostAction({ postId: postId as Id<"posts"> }).then(setPost);
+    getPostAction({ postId: postId as Id<"posts"> })
+      .then(setPost)
+      .catch(console.error);
   }, [getPostAction, postId]);
 
   const author = useQuery(

@@ -17,7 +17,7 @@ import {
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import Header from "../Header";
-import { SignInButton, SignUpButton, UserButton } from "@clerk/nextjs";
+import { SignInButton, SignUpButton } from "@clerk/nextjs";
 import { api } from "../../../convex/_generated/api";
 import { Textarea } from "@/components/ui/textarea";
 
@@ -50,7 +50,7 @@ export default function Upload(){
                 headers: { "Content-Type": file.type },
                 body: file,
             });
-            const { storageId } = await result.json();
+            const { storageId }: { storageId: string } = await result.json();
 
             // 3. Create the post with the new storageId
             await createPost({

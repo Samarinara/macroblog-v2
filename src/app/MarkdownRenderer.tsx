@@ -5,6 +5,7 @@ import rehypeHighlight from "rehype-highlight";
 import rehypeSlug from "rehype-slug";
 import rehypeAutolinkHeadings from "rehype-autolink-headings";
 // Ensure a single highlight.js theme is imported globally (e.g., app/globals.css)
+import Image from "next/image";
 import "highlight.js/styles/github-dark.css";
 
 type MarkdownRendererProps = {
@@ -44,7 +45,7 @@ export function MarkdownRenderer({ content }: MarkdownRendererProps) {
 
           // Links
           a: ({ node: _node, href, ...props }) => {
-            const isInternal = href?.startsWith("/") || href?.startsWith("#");
+            const isInternal = (href?.startsWith("/") ?? false) || (href?.startsWith("#") ?? false);
             if (isInternal) {
               // Avoid importing next/link here; the page can wrap content or leave normal <a> for anchors
               return <a href={href} className="text-emerald-600 hover:underline dark:text-emerald-400" {...props} />;
@@ -61,8 +62,13 @@ export function MarkdownRenderer({ content }: MarkdownRendererProps) {
           },
 
           // Images
-          img: ({ node: _node, ...props }) => (
-            <img className="rounded-md border border-gray-200 dark:border-zinc-800 max-w-full" {...props} />
+          img: ({ node: _node, src, alt, ...props }) => (
+            <Image
+              className="rounded-md border border-gray-200 dark:border-zinc-800 max-w-full h-auto"
+              src={src ?? ""}
+              alt={alt ?? ""}
+              {...props}
+            />
           ),
 
           // Blockquotes
@@ -74,10 +80,10 @@ export function MarkdownRenderer({ content }: MarkdownRendererProps) {
           ),
 
           // Lists
-          ul: ({ node: _node, className, ...props }) => (
+          ul: ({ node: _node, ...props }) => (
             <ul className="list-disc pl-6 my-4 space-y-2 marker:text-gray-500" {...props} />
           ),
-          ol: ({ node: _node, className, ...props }) => (
+          ol: ({ node: _node, ...props }) => (
             <ol className="list-decimal pl-6 my-4 space-y-2 marker:text-gray-500" {...props} />
           ),
           li: ({ node: _node, className, children, ...props }) => {
