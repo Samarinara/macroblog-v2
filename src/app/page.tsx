@@ -16,7 +16,7 @@ import { Skeleton } from "@/components/ui/skeleton"
 import { useMutation } from "convex/react";
 import StoreUser from "./StoreUser";
 
-const FeaturedUsers: string[] = ["samkatevatis@gmail.com", "samkatevatis@usernametaken.net"]
+const FeaturedUsers: string[] = ["samkatevatis@gmail.com"]
 
 function FeaturedUserCard({ email }: { email: string }) {
   const router = useRouter();
@@ -101,8 +101,8 @@ export default function Homepage() {
       <div className="flex bg-green-900 justify-center items-center lg:text-[7vw] text-[15vw] text-white flex-col lg:h-[100vh] md:h-[40vh] h-[25vh] p-3">
         <h1>MACROBLOG</h1>
         <div className="flex flex-row gap-4">
-          <Input placeholder="Search" className="lg:w-[30vw] lg:h-[7vh] h-[5vh] w-[60vw] text-xl border"/>
-          <Button className="h-[5vh] w-[20vw] lg:w-[5vw] lg:h-[7vh] "><Search /></Button>
+          <Input placeholder="Search is not yet available" className="lg:w-[30vw] lg:h-[7vh] h-[5vh] w-[60vw] text-xl text-black bg-[#F8F5F0] border"/>
+          <Button className="h-[5vh] w-[20vw] lg:w-[5vw] lg:h-[7vh] "><Search></Search></Button>
         </div>
         <div  className="-m-[1vh]">
           <Unauthenticated>
@@ -112,11 +112,6 @@ export default function Homepage() {
               </Button>
             </SignUpButton>               
           </Unauthenticated>
-          <Authenticated>
-            <Button className="h-[5vh] w-[20vw]" onClick={handleAddPost}>
-              Add Dummy Post
-            </Button>
-          </Authenticated>
         </div>
       </div>
       <div className="flex m-[1vw] lg:allign-center lg:justify-center flex-col sm:flex-row md:w-[50vw] w-[100vw] lg:overflow-x-hidden md:overflow-x-visible sm:overflow-x-hidden">
