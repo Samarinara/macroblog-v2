@@ -12,6 +12,13 @@ type MarkdownRendererProps = {
 
 const rehypeHighlightAuto = rehypeHighlight as unknown as (...args: any[]) => any;
 
+interface CodeProps extends React.HTMLAttributes<HTMLElement> {
+  node?: object;
+  inline?: boolean;
+  className?: string;
+  children?: React.ReactNode;
+}
+
 export function MarkdownRenderer({ content }: MarkdownRendererProps) {
   return (
     <article className="prose lg:prose-xl max-w-none mt-8 dark:prose-invert prose-pre:bg-transparent">
@@ -122,16 +129,7 @@ export function MarkdownRenderer({ content }: MarkdownRendererProps) {
           pre: ({ node, ...props }) => (
             <pre className="my-4 overflow-x-auto rounded-lg border border-gray-200 dark:border-zinc-800" {...props} />
           ),
-          code: ({
-            inline,
-            className,
-            children,
-            ...props
-          }: {
-            inline?: boolean;
-            className?: string;
-            children?: React.ReactNode;
-          } & React.HTMLAttributes<HTMLElement>) => {
+          code: ({ node, inline, className, children, ...props }: CodeProps) => {
             if (inline) {
               return (
                 <code
