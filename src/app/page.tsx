@@ -50,7 +50,7 @@ export default function Homepage() {
   return (
     <>
       <Header />
-      <div className="flex bg-green-900 justify-center items-center lg:text-[7vw] text-[15vw] text-white flex-col lg:h-[100vh] md:h-[40vh] h-[25vh] p-3">
+      <div className="flex bg-green-900 justify-center items-center lg:text-[7vw] text-[15vw] text-white flex-col lg:h-[100vh] md:h-[40vh] h-[35vh] p-3">
         <h1>MACROBLOG</h1>
         <form onSubmit={handleSearch} className="flex flex-row gap-4">
           <Input
