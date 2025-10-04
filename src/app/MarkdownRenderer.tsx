@@ -1,13 +1,10 @@
-// New component: MarkdownRenderer.tsx (or inline in the same file)
-
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 import rehypeHighlight from "rehype-highlight";
 import rehypeSlug from "rehype-slug";
 import rehypeAutolinkHeadings from "rehype-autolink-headings";
-import type { ReactMarkdownProps } from "react-markdown/lib/complex-types";
 // Ensure a single highlight.js theme is imported globally (e.g., app/globals.css)
-// import "highlight.js/styles/github-dark.css";
+import "highlight.js/styles/github-dark.css";
 
 type MarkdownRendererProps = {
   content: string;
@@ -125,28 +122,32 @@ export function MarkdownRenderer({ content }: MarkdownRendererProps) {
           pre: ({ node, ...props }) => (
             <pre className="my-4 overflow-x-auto rounded-lg border border-gray-200 dark:border-zinc-800" {...props} />
           ),
-            code: ({
+          code: ({
             inline,
             className,
             children,
             ...props
-            }: ReactMarkdownProps & { inline?: boolean }) => {
-                if (inline) {
-                    return (
-                    <code
-                        className="px-1.5 py-0.5 rounded bg-gray-100 dark:bg-zinc-800 font-mono text-[0.9em]"
-                        {...props}
-                    >
-                        {children}
-                    </code>
-                );
+          }: {
+            inline?: boolean;
+            className?: string;
+            children?: React.ReactNode;
+          } & React.HTMLAttributes<HTMLElement>) => {
+            if (inline) {
+              return (
+                <code
+                  className="px-1.5 py-0.5 rounded bg-gray-100 dark:bg-zinc-800 font-mono text-[0.9em]"
+                  {...props}
+                >
+                  {children}
+                </code>
+              );
             }
-                return (
-                    <code className={className ?? "hljs"} {...props}>
-                    {children}
-                    </code>
-                );
-            },
+            return (
+              <code className={className ?? "hljs"} {...props}>
+                {children}
+              </code>
+            );
+          },
         }}
       >
         {content}
