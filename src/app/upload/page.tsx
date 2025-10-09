@@ -42,6 +42,10 @@ export default function Upload(){
             toast.error("Please select a markdown file to upload.");
             return;
         }
+        if (file.type != ".md"){
+            toast.error("Please select a markdown (.md) file to upload.");
+            return;          
+        }
         setIsSubmitting(true);
 
         try {
